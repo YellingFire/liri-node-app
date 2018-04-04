@@ -6,18 +6,12 @@ var Twitter = require("twitter");
 var Spotify = require("node-spotify-api");
 // initiate the key.js page
 var keys = require("./keys.js");
+//initiate request npm
+var request = require('request');
 var userChoice = process.argv[2];
 var secondQuery = process.argv[3];
 
-//If no secondQuery is passed run this function
-function noSongPassed(){
-    console.log(spotify.search({type: "track", query: "Ace of Base: The Sign"}, function(data) {
-        `${spotArtist}
-        ${spotSongName}
-        ${spotPreview}
-        ${spotAlbum}`
-        }));
-};
+
 
 // create a local instance for twitter client
 var client= new Twitter({
@@ -31,6 +25,33 @@ var spotify = new Spotify({
     id: keys.spotify.id,
     secret: keys.spotify.secret
   });
+
+function getMovies(){
+    request("http://www.omdbapi.com/?apikey=trilogy&t=" + secondQuery, function(error, response) {
+        // console.log("error: ", error);
+        var myResp = JSON.parse(response.body);
+        var movTitle = "Title: " + myResp.Title;
+        var movYear = "Year: " + myResp.Year;
+        var movIMDBRate = "IMDB Rating: " + myResp.Ratings[1].Value;
+        var movRottRate = "Rotten Tomatoes: " + myResp.Ratings[1].Value;
+        var movCountProd = "Country: " + myResp.Country;
+        var movLang = "Language: " + myResp.Language;
+        var movPlot = "Plot: " + myResp.Plot;
+        var movActors = "Actors: " + myResp.Actors;
+
+        console.log(`
+        ${movTitle}
+        ${movYear}
+        ${movIMDBRate}
+        ${movRottRate}
+        ${movCountProd}
+        ${movLang}
+        ${movPlot}
+        ${movActors}`)
+    })
+
+};
+//END getMovies()--  
 
 // Function for pulling tweets from the @JavarushChad timeline--change out @JavarushChad to global variable "secondQuery" above to enter username as arg[3]
 function getTweets(){
@@ -48,6 +69,7 @@ function getTweets(){
         // console.log(tweets[0].created_at);
      });
 };
+//END getTweets()--
 
 //Need to handle if no secondQuery query is entered
 function getSpotify(){
@@ -70,7 +92,33 @@ function getSpotify(){
         }
 
     });
-};    
+};
+//END getSpotify()--
+
+//If no secondQuery is passed run this function
+function noSongPassed(){
+    spotify.search({type: "track", query: "Ace of Base: The Sign"}, function(err, data) {
+        var spotArtistDef= data.tracks.items[0].artists[0].name;
+        var spotSongNameDef= data.tracks.items[0].name;
+        var spotPreviewDef= data.tracks.items[0].preview_url;
+        var spotAlbumDef= data.tracks.items[0].album.name;
+
+        if (err) {
+            return console.log("Error occurred: " + err);
+        }
+
+        else {
+            console.log(`
+            ${spotArtistDef}
+            ${spotSongNameDef}
+            ${spotPreviewDef}
+            ${spotAlbumDef}`);
+        }
+
+        
+    });
+};
+//END noSongPassed()--
 
 
 //Start the logic to handle the arguments entered by user
@@ -78,8 +126,21 @@ function getSpotify(){
 if (userChoice === "my-tweets") {
     getTweets();
 }
+
+//spotify NO secondQuery case
+else if (userChoice === "spotify-this-song" && secondQuery === undefined || null || "") {
+    noSongPassed();
+}
+
 //spotify case
 else if (userChoice === "spotify-this-song") {
     getSpotify();
-};
+   
+}
+
+//get movie case
+else if (userChoice === "movie-this") {
+    getMovies();
+}
+
 
