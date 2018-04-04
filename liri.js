@@ -8,6 +8,9 @@ var Spotify = require("node-spotify-api");
 var keys = require("./keys.js");
 //initiate request npm
 var request = require('request');
+//initiate fs npm
+var fs = require('file-system');
+//Global Variables for UI
 var userChoice = process.argv[2];
 var secondQuery = process.argv[3];
 
@@ -157,6 +160,20 @@ function noSongPassed(){
 };
 //END noSongPassed()--
 
+//Function for Do What it Says
+function DWIS() {
+
+    fs.readFile("./random.txt", 'utf8', function read(err, data) {
+
+        if (err) {
+            throw err;
+        }
+        // doWhatContent = data;
+        console.log(data);
+        // processData();
+    });
+};
+//END DWIS()--
 
 //Start the logic to handle the arguments entered by user
 //twitter case
@@ -185,4 +202,7 @@ else if (userChoice === "movie-this") {
     getMovies();
 }
 
+else if (userChoice === "do-what-it-says") {
+    DWIS();
+};
 
