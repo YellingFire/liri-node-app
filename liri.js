@@ -3,14 +3,15 @@ require("dotenv").config();
 // initiate the npm for twitter
 var Twitter = require("twitter");
 //intiate the npm for spotify
-var Spotify = require('node-spotify-api');
+var Spotify = require("node-spotify-api");
 // initiate the key.js page
 var keys = require("./keys.js");
 var userChoice = process.argv[2];
 var secondQuery = process.argv[3];
 
+//If no secondQuery is passed run this function
 function noSongPassed(){
-    console.log(spotify.search({type: 'track', query: 'The Sign'}, function(data) {
+    console.log(spotify.search({type: "track", query: "Ace of Base: The Sign"}, function(data) {
         `${spotArtist}
         ${spotSongName}
         ${spotPreview}
@@ -31,12 +32,17 @@ var spotify = new Spotify({
     secret: keys.spotify.secret
   });
 
-// Function for pulling tweets from the @JavarushChad timeline--change out @JavarushChad to global variable "twitterUsername" above to enter username as arg[3]
+// Function for pulling tweets from the @JavarushChad timeline--change out @JavarushChad to global variable "secondQuery" above to enter username as arg[3]
 function getTweets(){
-    client.get('statuses/user_timeline', {screen_name: "@JavarushChad"}, function(error, tweets, response) {
+    client.get("statuses/user_timeline", {screen_name: "@JavarushChad"}, function(error, tweets, response) {
 
         for (i = 0; i < tweets.length; i++) {
-            console.log(tweets[i].text + "\n" + tweets[i].created_at + "\n");
+            var tweeties = tweets[i].text;
+            var createdTweetiesAt = tweets[i].created_at
+            // console.log(tweets[i].text + "\n" + tweets[i].created_at + "\n");
+            console.log(`
+            ${tweeties}
+            ${createdTweetiesAt}`)
         };
         // console.log(tweets[0].text);
         // console.log(tweets[0].created_at);
@@ -52,7 +58,7 @@ function getSpotify(){
         var spotAlbum= data.tracks.items[0].album.name;
 
         if (err) {
-            return console.log('Error occurred: ' + err);
+            return console.log("Error occurred: " + err);
         }
 
         else {
