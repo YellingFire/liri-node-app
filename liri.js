@@ -11,8 +11,6 @@ var request = require('request');
 var userChoice = process.argv[2];
 var secondQuery = process.argv[3];
 
-
-
 // create a local instance for twitter client
 var client= new Twitter({
     consumer_key: keys.twitter.consumer_key,
@@ -26,9 +24,10 @@ var spotify = new Spotify({
     secret: keys.spotify.secret
   });
 
+ //Function for pulling movies in 
 function getMovies(){
     request("http://www.omdbapi.com/?apikey=trilogy&t=" + secondQuery, function(error, response) {
-        // console.log("error: ", error);
+        
         var myResp = JSON.parse(response.body);
         var movTitle = "Title: " + myResp.Title;
         var movYear = "Year: " + myResp.Year;
@@ -39,19 +38,57 @@ function getMovies(){
         var movPlot = "Plot: " + myResp.Plot;
         var movActors = "Actors: " + myResp.Actors;
 
-        console.log(`
-        ${movTitle}
-        ${movYear}
-        ${movIMDBRate}
-        ${movRottRate}
-        ${movCountProd}
-        ${movLang}
-        ${movPlot}
-        ${movActors}`)
-    })
+        if (error) {
+            return console.log("error: ", error);;
+        }
 
+        else {
+            console.log(`
+            ${movTitle}
+            ${movYear}
+            ${movIMDBRate}
+            ${movRottRate}
+            ${movCountProd}
+            ${movLang}
+            ${movPlot}
+            ${movActors}`)
+        }        
+    })
 };
 //END getMovies()--  
+
+//Function for no Movie selected
+function noMovieSelected() {
+    request("http://www.omdbapi.com/?apikey=trilogy&t=Mr.+Nobody", function(error, response) {
+
+        var myResp = JSON.parse(response.body);
+        var movTitle = "Title: " + myResp.Title;
+        var movYear = "Year: " + myResp.Year;
+        var movIMDBRate = "IMDB Rating: " + myResp.Ratings[1].Value;
+        var movRottRate = "Rotten Tomatoes: " + myResp.Ratings[1].Value;
+        var movCountProd = "Country: " + myResp.Country;
+        var movLang = "Language: " + myResp.Language;
+        var movPlot = "Plot: " + myResp.Plot;
+        var movActors = "Actors: " + myResp.Actors;
+
+        if (error) {
+            return console.log("error: ", error);;
+        }
+
+        else {
+            console.log(`
+            ${movTitle}
+            ${movYear}
+            ${movIMDBRate}
+            ${movRottRate}
+            ${movCountProd}
+            ${movLang}
+            ${movPlot}
+            ${movActors}`)
+        }
+    });
+};
+//END noMovieSelected()--
 
 // Function for pulling tweets from the @JavarushChad timeline--change out @JavarushChad to global variable "secondQuery" above to enter username as arg[3]
 function getTweets(){
@@ -136,6 +173,11 @@ else if (userChoice === "spotify-this-song" && secondQuery === undefined || null
 else if (userChoice === "spotify-this-song") {
     getSpotify();
    
+}
+
+//Movie NO secondQuery case
+else if (userChoice === "movie-this" && secondQuery === undefined || null || "") {
+    noMovieSelected();
 }
 
 //get movie case
