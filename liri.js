@@ -100,20 +100,19 @@ function getTweets(){
         for (i = 0; i < tweets.length; i++) {
             var tweeties = tweets[i].text;
             var createdTweetiesAt = tweets[i].created_at
-            // console.log(tweets[i].text + "\n" + tweets[i].created_at + "\n");
+
             console.log(`
             ${tweeties}
             ${createdTweetiesAt}`)
         };
-        // console.log(tweets[0].text);
-        // console.log(tweets[0].created_at);
+        
      });
 };
 //END getTweets()--
 
 //Need to handle if no secondQuery query is entered
-function getSpotify(){
-    spotify.search({ type: "track", query: secondQuery, limit: 10 }, function(err, data) {
+function getSpotify(searchTerm){
+    spotify.search({ type: "track", query: searchTerm, limit: 10 }, function(err, data) {
         var spotArtist= data.tracks.items[0].artists[0].name;
         var spotSongName= data.tracks.items[0].name;
         var spotPreview= data.tracks.items[0].preview_url;
@@ -127,7 +126,7 @@ function getSpotify(){
             console.log(`
             ${spotArtist}
             ${spotSongName}
-            ${spotPreview}
+            ${spotPreview ? spotPreview : "No Preview available"}
             ${spotAlbum}`);
         }
 
@@ -151,7 +150,7 @@ function noSongPassed(){
             console.log(`
             ${spotArtistDef}
             ${spotSongNameDef}
-            ${spotPreviewDef}
+            ${spotPreviewDef ? spotPreviewDef : "No Preview available"}
             ${spotAlbumDef}`);
         }
 
@@ -165,11 +164,35 @@ function DWIS() {
 
     fs.readFile("./random.txt", 'utf8', function read(err, data) {
 
+        var spotifyCont = "spotify";
+        var twitCont = "twitter";
+        var movCont = "movie";
+        var content = data;
+        var doWhatContent = data.split(",");
+        //Handle Errors
         if (err) {
             throw err;
         }
-        // doWhatContent = data;
-        console.log(data);
+        // console.log(doWhatContent[1])
+        // Do What I Say Spotify Case
+        else if (content.includes(spotifyCont)) {
+            var musicTitle = doWhatContent[1]
+            getSpotify(musicTitle);
+            // console.log("random.txt info includes the word 'spotify' " + doWhatContent[0]);
+            // console.log(musicTitle);
+            
+        }
+        // Do What I Say Twitter Case
+        else if (content.includes(twitCont)) {
+            getTweets();
+            console.log("random.txt info includes the word 'twitter' ");
+        }
+        //Do What I Say Movie Case
+        else if (content.includes(movCont)) {
+            console.log("random.txt info includes the word 'Movie' ");
+        };
+        
+        
         // processData();
     });
 };
@@ -182,18 +205,18 @@ if (userChoice === "my-tweets") {
 }
 
 //spotify NO secondQuery case
-else if (userChoice === "spotify-this-song" && secondQuery === undefined || null || "") {
+else if (userChoice === "spotify-this-song" && secondQuery === undefined) {
     noSongPassed();
 }
 
 //spotify case
 else if (userChoice === "spotify-this-song") {
-    getSpotify();
+    getSpotify(secondQuery);
    
 }
 
 //Movie NO secondQuery case
-else if (userChoice === "movie-this" && secondQuery === undefined || null || "") {
+else if (userChoice === "movie-this" && secondQuery === undefined) {
     noMovieSelected();
 }
 
@@ -203,6 +226,7 @@ else if (userChoice === "movie-this") {
 }
 
 else if (userChoice === "do-what-it-says") {
+
     DWIS();
 };
 
