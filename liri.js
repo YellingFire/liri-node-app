@@ -28,8 +28,8 @@ var spotify = new Spotify({
   });
 
  //Function for pulling movies in 
-function getMovies(){
-    request("http://www.omdbapi.com/?apikey=trilogy&t=" + secondQuery, function(error, response) {
+function getMovies(movSearchTerm){
+    request("http://www.omdbapi.com/?apikey=trilogy&t=" + movSearchTerm, function(error, response) {
         
         var myResp = JSON.parse(response.body);
         var movTitle = "Title: " + myResp.Title;
@@ -58,40 +58,7 @@ function getMovies(){
         }        
     })
 };
-//END getMovies()--  
-
-//Function for no Movie selected
-function noMovieSelected() {
-    request("http://www.omdbapi.com/?apikey=trilogy&t=Mr.+Nobody", function(error, response) {
-
-        var myResp = JSON.parse(response.body);
-        var movTitle = "Title: " + myResp.Title;
-        var movYear = "Year: " + myResp.Year;
-        var movIMDBRate = "IMDB Rating: " + myResp.Ratings[1].Value;
-        var movRottRate = "Rotten Tomatoes: " + myResp.Ratings[1].Value;
-        var movCountProd = "Country: " + myResp.Country;
-        var movLang = "Language: " + myResp.Language;
-        var movPlot = "Plot: " + myResp.Plot;
-        var movActors = "Actors: " + myResp.Actors;
-
-        if (error) {
-            return console.log("error: ", error);;
-        }
-
-        else {
-            console.log(`
-            ${movTitle}
-            ${movYear}
-            ${movIMDBRate}
-            ${movRottRate}
-            ${movCountProd}
-            ${movLang}
-            ${movPlot}
-            ${movActors}`)
-        }
-    });
-};
-//END noMovieSelected()--
+//END getMovies()-- 
 
 // Function for pulling tweets from the @JavarushChad timeline--change out @JavarushChad to global variable "secondQuery" above to enter username as arg[3]
 function getTweets(){
@@ -110,7 +77,6 @@ function getTweets(){
 };
 //END getTweets()--
 
-//Need to handle if no secondQuery query is entered
 function getSpotify(searchTerm){
     spotify.search({ type: "track", query: searchTerm, limit: 10 }, function(err, data) {
         var spotArtist= data.tracks.items[0].artists[0].name;
@@ -134,31 +100,6 @@ function getSpotify(searchTerm){
 };
 //END getSpotify()--
 
-//If no secondQuery is passed run this function
-function noSongPassed(){
-    spotify.search({type: "track", query: "Ace of Base: The Sign"}, function(err, data) {
-        var spotArtistDef= data.tracks.items[0].artists[0].name;
-        var spotSongNameDef= data.tracks.items[0].name;
-        var spotPreviewDef= data.tracks.items[0].preview_url;
-        var spotAlbumDef= data.tracks.items[0].album.name;
-
-        if (err) {
-            return console.log("Error occurred: " + err);
-        }
-
-        else {
-            console.log(`
-            ${spotArtistDef}
-            ${spotSongNameDef}
-            ${spotPreviewDef ? spotPreviewDef : "No Preview available"}
-            ${spotAlbumDef}`);
-        }
-
-        
-    });
-};
-//END noSongPassed()--
-
 //Function for Do What it Says
 function DWIS() {
 
@@ -176,20 +117,20 @@ function DWIS() {
         // console.log(doWhatContent[1])
         // Do What I Say Spotify Case
         else if (content.includes(spotifyCont)) {
-            var musicTitle = doWhatContent[1]
+            var musicTitle = doWhatContent[1];
             getSpotify(musicTitle);
-            // console.log("random.txt info includes the word 'spotify' " + doWhatContent[0]);
-            // console.log(musicTitle);
             
         }
         // Do What I Say Twitter Case
         else if (content.includes(twitCont)) {
             getTweets();
-            console.log("random.txt info includes the word 'twitter' ");
+            // console.log("random.txt info includes the word 'twitter' ");
         }
         //Do What I Say Movie Case
         else if (content.includes(movCont)) {
-            console.log("random.txt info includes the word 'Movie' ");
+            var movieTitle = doWhatContent[1];
+            getMovies(movieTitle);
+            // console.log("random.txt info includes the word 'Movie' ");
         };
         
         
@@ -204,12 +145,13 @@ if (userChoice === "my-tweets") {
     getTweets();
 }
 
-//spotify NO secondQuery case
+//Spotify NO secondQuery case
 else if (userChoice === "spotify-this-song" && secondQuery === undefined) {
-    noSongPassed();
+    var noSecondSpotQuery = "Ace of Base: The Sign";
+    getSpotify(noSecondSpotQuery);
 }
 
-//spotify case
+//Spotify case
 else if (userChoice === "spotify-this-song") {
     getSpotify(secondQuery);
    
@@ -217,16 +159,17 @@ else if (userChoice === "spotify-this-song") {
 
 //Movie NO secondQuery case
 else if (userChoice === "movie-this" && secondQuery === undefined) {
-    noMovieSelected();
+    var noSecondMovQuery = "Mr.+Nobody";
+    getMovies(noSecondMovQuery);
 }
 
-//get movie case
+//Get movie case
 else if (userChoice === "movie-this") {
-    getMovies();
+    getMovies(secondQuery);
 }
 
+//Do What it says case
 else if (userChoice === "do-what-it-says") {
-
     DWIS();
 };
 
