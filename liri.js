@@ -1,15 +1,17 @@
 //initiate the calling of the .env file that holds potentially sensitive material
 require("dotenv").config();
 // initiate the npm for twitter
-var Twitter = require("twitter");
+const Twitter = require("twitter");
 //intiate the npm for spotify
-var Spotify = require("node-spotify-api");
+const Spotify = require("node-spotify-api");
 // initiate the key.js page
-var keys = require("./keys.js");
+const keys = require("./keys.js");
 //initiate request npm
-var request = require('request');
+const request = require('request');
 //initiate fs npm
-var fs = require('file-system');
+const fs = require('file-system');
+//initate inquirer
+const inquirer = require('inquirer');
 //Global Variables for UI
 var userChoice = process.argv[2];
 var secondQuery = process.argv[3];
