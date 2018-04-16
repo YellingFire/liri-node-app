@@ -4,8 +4,10 @@ Welcome to Chad's LIRI Node App!
 
 There are 4 basic prompts that can be used in this command line app. 
 
-    1. node liri.js my-tweets "ENTER-TWITTER-SCREEN-NAME-HERE"
-    This will return the usernames most recent 20 tweets.
+    1. node liri.js my-tweets
+    
+    note: code is ready to take an argument to "ENTER-TWITTER-SCREEN-NAME-HERE" small changes will need to be made.
+    This will return the usernames most recent 20 tweets. currently this is set to my "Dummy" account.
 
     2. spotify-this-song "ENTER-SONG-NAME-HERE"
     This will return pertinent information about the requested song.
